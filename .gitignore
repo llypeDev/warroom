@@ -59,3 +59,7 @@ Thumbs.db
 /bench/
 /Dockerfile.bench
 /Dockerfile.bench.v2
+
+# Relatório de auditoria de segurança (detalha vulnerabilidades; o repositório
+# é público, então fica só local)
+/ANALISE-PROJETO.md
