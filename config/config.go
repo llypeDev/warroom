@@ -145,7 +145,7 @@ func PostgresDSN() (dsn, source string, err error) {
 	if db.Host != "" || db.DBName != "" || db.User != "" {
 		return db.buildDSN(), "配置文件 " + Path() + " (database 字段)", nil
 	}
-	return "", "", fmt.Errorf("未找到数据库配置：环境变量 WARROOM_PG_DSN 未设置，且配置文件 %s 未提供 database（dsn 或 host/user/dbname）。请创建该配置文件或设置环境变量后重试", Path())
+	return "", "", fmt.Errorf("configuração de banco de dados não encontrada: a variável de ambiente WARROOM_PG_DSN não está definida e o arquivo de configuração %s não fornece database (dsn ou host/user/dbname). crie esse arquivo de configuração ou defina a variável de ambiente e tente novamente", Path())
 }
 
 func (d Database) buildDSN() string {

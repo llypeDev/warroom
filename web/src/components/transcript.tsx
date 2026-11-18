@@ -198,8 +198,10 @@ function InterceptCard({
   }, [step.summary]);
 
   const toolName = React.useMemo(() => {
-    const m = /工具\s+(\S+)\s+请求/.exec(step.summary);
-    return m ? m[1] : step.summary;
+    // Aceita o formato novo (PT-BR) e o histórico (chinês), para que atividades
+    // antigas gravadas antes da tradução continuem exibindo o nome da ferramenta.
+    const m = /(?:Ferramenta\s+(\S+)\s+solicita|工具\s+(\S+)\s+请求)/.exec(step.summary);
+    return m ? (m[1] ?? m[2]) : step.summary;
   }, [step.summary]);
 
   const [detail, setDetail] = React.useState<Record<string, unknown> | null>(null);

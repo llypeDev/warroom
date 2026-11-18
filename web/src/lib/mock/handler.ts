@@ -1102,18 +1102,18 @@ function route(m: string, path: string, seg: string[], q: URLSearchParams, b: Re
   }
   if (seg[0] === "task-archives" && seg.length === 2 && m === "GET") {
     const archive = mockTaskArchives.find((item) => item.id === Number(seg[1]));
-    if (!archive) throw new Error("归档不存在");
+    if (!archive) throw new Error("arquivo de arquivamento não encontrado");
     return publicMockTaskArchive(archive);
   }
   if (seg[0] === "task-archives" && seg[2] === "restore" && seg.length === 3 && m === "POST") {
     const archive = mockTaskArchives.find((item) => item.id === Number(seg[1]));
-    if (!archive) throw new Error("归档不存在");
+    if (!archive) throw new Error("arquivo de arquivamento não encontrado");
     mockRestoreArchive(archive);
     return publicMockTaskArchive(archive);
   }
   if (seg[0] === "task-archives" && seg.length === 2 && m === "DELETE") {
     const archive = mockTaskArchives.find((item) => item.id === Number(seg[1]));
-    if (!archive) throw new Error("归档不存在");
+    if (!archive) throw new Error("arquivo de arquivamento não encontrado");
     mockDeleteArchive(archive);
     return publicMockTaskArchive(archive);
   }
@@ -1121,7 +1121,7 @@ function route(m: string, path: string, seg: string[], q: URLSearchParams, b: Re
     const ids = bodyIDs(b.archive_ids).map(Number);
     const items = ids.map<ArchiveBatchItem>((id) => {
       const archive = mockTaskArchives.find((item) => item.id === id);
-      if (!archive) return { id: String(id), archive_id: id, ok: false, queued: false, error: "归档不存在" };
+      if (!archive) return { id: String(id), archive_id: id, ok: false, queued: false, error: "arquivo de arquivamento não encontrado" };
       try {
         mockRestoreArchive(archive);
         return { id: String(id), archive_id: id, ok: true, queued: true };
@@ -1135,7 +1135,7 @@ function route(m: string, path: string, seg: string[], q: URLSearchParams, b: Re
     const ids = bodyIDs(b.archive_ids).map(Number);
     const items = ids.map<ArchiveBatchItem>((id) => {
       const archive = mockTaskArchives.find((item) => item.id === id);
-      if (!archive) return { id: String(id), archive_id: id, ok: false, queued: false, error: "归档不存在" };
+      if (!archive) return { id: String(id), archive_id: id, ok: false, queued: false, error: "arquivo de arquivamento não encontrado" };
       try {
         mockDeleteArchive(archive);
         return { id: String(id), archive_id: id, ok: true, queued: true };

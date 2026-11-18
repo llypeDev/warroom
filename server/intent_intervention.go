@@ -54,7 +54,7 @@ func (s *Server) sendWorkerMessage(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		var tooLarge *http.MaxBytesError
 		if errors.As(err, &tooLarge) {
-			writeErr(w, http.StatusRequestEntityTooLarge, "请求体过大")
+			writeErr(w, http.StatusRequestEntityTooLarge, "corpo da requisição muito grande")
 			return
 		}
 		writeErr(w, http.StatusBadRequest, "bad json: "+err.Error())
@@ -63,15 +63,15 @@ func (s *Server) sendWorkerMessage(w http.ResponseWriter, r *http.Request) {
 	message := strings.TrimSpace(req.Message)
 	requestID := strings.TrimSpace(req.RequestID)
 	if message == "" {
-		writeErr(w, http.StatusBadRequest, "消息不能为空")
+		writeErr(w, http.StatusBadRequest, "mensagem não pode estar vazia")
 		return
 	}
 	if len([]rune(message)) > 4000 {
-		writeErr(w, http.StatusBadRequest, "消息不能超过 4000 个字符")
+		writeErr(w, http.StatusBadRequest, "mensagem não pode exceder 4000 caracteres")
 		return
 	}
 	if !validWorkerMessageRequestID(requestID) {
-		writeErr(w, http.StatusBadRequest, "request_id 必须是 1-128 位字母、数字、-、_、. 或 :")
+		writeErr(w, http.StatusBadRequest, "request_id deve ter de 1 a 128 caracteres entre letras, números, -, _, . ou :")
 		return
 	}
 
@@ -79,22 +79,22 @@ func (s *Server) sendWorkerMessage(w http.ResponseWriter, r *http.Request) {
 	// instead of a silent no-op. The intent itself must be paused: the UI flow is
 	// interrupt (pause) first, then send.
 	if s.engine.IsDeleting(t.ID) {
-		writeErr(w, http.StatusConflict, "任务正在删除，无法向 Worker 发送消息")
+		writeErr(w, http.StatusConflict, "tarefa está sendo excluída, não é possível enviar mensagem ao Worker")
 		return
 	}
 	lifecycle := t.lifecycleSnapshot()
 	switch {
 	case lifecycle.Paused || s.engine.IsPaused(t.ID):
-		writeErr(w, http.StatusConflict, "任务已暂停，请先恢复任务再向 Worker 发送消息")
+		writeErr(w, http.StatusConflict, "tarefa está pausada, retome a tarefa antes de enviar mensagem ao Worker")
 		return
 	case lifecycle.Queued:
-		writeErr(w, http.StatusConflict, "排队中的任务无法向 Worker 发送消息")
+		writeErr(w, http.StatusConflict, "tarefa na fila não pode enviar mensagem ao Worker")
 		return
 	case isTerminalStatus(lifecycle.Status):
-		writeErr(w, http.StatusConflict, "终态任务无法向 Worker 发送消息")
+		writeErr(w, http.StatusConflict, "tarefa em estado terminal não pode enviar mensagem ao Worker")
 		return
 	case s.engine.isSettling(t.ID):
-		writeErr(w, http.StatusConflict, "任务正在收尾，无法向 Worker 发送消息")
+		writeErr(w, http.StatusConflict, "tarefa está sendo finalizada, não é possível enviar mensagem ao Worker")
 		return
 	}
 
@@ -105,7 +105,7 @@ func (s *Server) sendWorkerMessage(w http.ResponseWriter, r *http.Request) {
 	}
 	if node == nil {
 		if inherited, sourceErr := t.Store.GetNodeWithSources(iid); sourceErr == nil && inherited != nil && inherited.Inherited {
-			writeErr(w, http.StatusConflict, "继承意图为只读，不能发送 Worker 消息")
+			writeErr(w, http.StatusConflict, "intenção herdada é somente leitura, não é possível enviar mensagem ao Worker")
 			return
 		}
 		writeErr(w, http.StatusNotFound, "intent not found")
@@ -116,7 +116,7 @@ func (s *Server) sendWorkerMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if node.State != "paused" {
-		writeErr(w, http.StatusConflict, "仅已暂停的 Worker 可以发送消息，请先暂停")
+		writeErr(w, http.StatusConflict, "somente Workers pausados podem enviar mensagem, pause a tarefa primeiro")
 		return
 	}
 	agentMessage, ok := s.prepareChatMentionMessage(w, message)

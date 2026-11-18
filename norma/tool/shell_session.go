@@ -289,7 +289,7 @@ func (m *Manager) session(id string) (*ptySession, bool) {
 // openSession starts an interactive program in a fresh PTY and begins its read loop.
 func (m *Manager) openSession(command, workDir string, env []string, rows, cols int, mode string, prompt *regexp.Regexp) (*ptySession, error) {
 	if !ptySupported() {
-		return nil, fmt.Errorf("交互式 shell(PTY) 在当前平台不支持")
+		return nil, fmt.Errorf("shell interativo (PTY) não é suportado na plataforma atual")
 	}
 	m.reapSessions()
 	if rows <= 0 {
