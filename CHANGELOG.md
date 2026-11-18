@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-18
+
 ### 品牌与许可
 
 - **项目更名为 WARROOM**：二进制名、命令行入口（`cmd/warroom`）、Go 模块路径、Docker 镜像与服务名、环境变量前缀（统一为 `WARROOM_`）、启动 banner、前端品牌与页面标题全部同步更新。已有的 `config.json` 无需改动；若此前设置过环境变量（`WARROOM_PG_DSN` / `WARROOM_SKILL_DIR` / `WARROOM_CONFIG` / `WARROOM_LLM_*`），请确认已使用新前缀。
@@ -831,13 +833,4 @@
 - 修复后端关闭时父 context 可能抢先覆盖具名 `shutdown` 原因的竞态，以及中文活动摘要按字节截断导致乱码的问题。
 - 修复带部分流式输出的取消事件丢失真实终止原因的问题，同时保留取消前已生成的内容。
 
-[Unreleased]: https://github.com/llypeDev/warroom/compare/v0.3.10...HEAD
-[0.3.10]: https://github.com/llypeDev/warroom/compare/v0.3.9...v0.3.10
-[0.3.9]: https://github.com/llypeDev/warroom/compare/v0.3.8...v0.3.9
-[0.3.8]: https://github.com/llypeDev/warroom/compare/v0.3.7...v0.3.8
-[0.3.7]: https://github.com/llypeDev/warroom/compare/v0.3.6...v0.3.7
-[0.3.6]: https://github.com/llypeDev/warroom/compare/v0.3.5...v0.3.6
-[0.3.5]: https://github.com/llypeDev/warroom/compare/v0.3.4...v0.3.5
-[0.3.4]: https://github.com/llypeDev/warroom/compare/v0.3.3...v0.3.4
-[0.3.3]: https://github.com/llypeDev/warroom/compare/v0.3.2...v0.3.3
-[0.3.2]: https://github.com/llypeDev/warroom/compare/v0.3.1...v0.3.2
+[Unreleased]: https://github.com/llypeDev/warroom/compare/v0.4.0...HEAD
