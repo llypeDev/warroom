@@ -128,7 +128,7 @@ export async function http<T>(path: string, init?: RequestInit): Promise<T> {
       document.cookie = "warroom_token=; path=/; max-age=0";
       window.location.href = "/login";
     }
-    throw new Error("未授权");
+    throw new Error("Não autorizado");
   }
   if (!r.ok) {
     const fallback = `${init?.method ?? "GET"} ${path}: ${r.status}`;
@@ -165,25 +165,25 @@ export async function http<T>(path: string, init?: RequestInit): Promise<T> {
 // Token is appended as ?token= because SSE can't carry cookies cross-origin.
 // mockReport returns a canned Markdown report for the demo.
 function mockReport(_task?: string): string {
-  return `# WARROOM 渗透测试报告 — Acme Corp
+  return `# Relatório de pentest WARROOM — Acme Corp
 
-## 概览
-- 范围：acme.com（含 www / admin / api / shop / vpn 子域）
-- 已确认发现：6 项（高危 3 · 中危 3 · 低危 2）
-- 引擎模式：exploring
+## Visão geral
+- Escopo: acme.com (inclui subdomínios www / admin / api / shop / vpn)
+- Descobertas confirmadas: 6 itens (Alto 3 · Médio 3 · Baixo 2)
+- Modo do motor: exploring
 
-## 关键发现
-1. **[高] 后台默认口令** admin.acme.com admin/admin123 → 可完全接管后台。
-2. **[高] SQL 注入** www.acme.com/search?q= → 可读取 acme_prod 库。
-3. **[高] IDOR** api.acme.com/v1/orders?id= → 可越权读取他人订单（含手机号/地址）。
-4. **[中] 反射型 XSS**、**暴露 .git 源码**、**登录无速率限制**。
+## Descobertas principais
+1. **[Alto] Credencial padrão do painel admin** admin.acme.com admin/admin123 → permite assumir totalmente o painel admin.
+2. **[Alto] Injeção SQL** www.acme.com/search?q= → permite ler o banco acme_prod.
+3. **[Alto] IDOR** api.acme.com/v1/orders?id= → permite ler pedidos de terceiros sem autorização (inclui telefone/endereço).
+4. **[Médio] XSS refletido**, **exposição do código-fonte .git**, **login sem limite de taxa**.
 
-## 建议
-- 后台强制改密 + 启用 MFA、封禁默认口令。
-- search 接口参数化查询、输出编码。
-- API 增加对象级授权校验（IDOR）、更换强 JWT 密钥。
+## Recomendações
+- Forçar troca de senha no painel admin + habilitar MFA, bloquear credenciais padrão.
+- Consultas parametrizadas e codificação de saída no endpoint search.
+- Adicionar verificação de autorização em nível de objeto (IDOR) na API, trocar a chave JWT fraca por uma forte.
 
-> （demo）本报告由 mock 数据生成，仅用于界面演示。`;
+> (demo) Este relatório é gerado a partir de dados mock, apenas para demonstração da interface.`;
 }
 
 export function sseUrl(path: string): string {
@@ -448,19 +448,19 @@ export const api = {
       headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       body: fd,
     });
-    if (!r.ok) throw new Error(`上传失败: ${r.status}`);
+    if (!r.ok) throw new Error(`Falha no upload: ${r.status}`);
     return r.json() as Promise<{ uploaded: number }>;
   },
   workspaceDownload: async (path: string) => {
     let blob: Blob;
     if (MOCK) {
-      blob = new Blob([`（demo）${path} 的下载内容示例。`], { type: "text/plain" });
+      blob = new Blob([`(demo) Exemplo de conteúdo baixado de ${path}.`], { type: "text/plain" });
     } else {
       const token = getToken();
       const r = await fetch(`/api/workspace/download?path=${encodeURIComponent(path)}`, {
         headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       });
-      if (!r.ok) throw new Error(`下载失败: ${r.status}`);
+      if (!r.ok) throw new Error(`Falha no download: ${r.status}`);
       blob = await r.blob();
     }
     const objUrl = URL.createObjectURL(blob);
@@ -649,8 +649,8 @@ export const api = {
       { headers: token ? { Authorization: `Bearer ${token}` } : {} },
     );
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ error: "下载失败" }));
-      throw new Error(error.error ?? "下载失败");
+      const error = await response.json().catch(() => ({ error: "Falha no download" }));
+      throw new Error(error.error ?? "Falha no download");
     }
     const blob = await response.blob();
     const url = URL.createObjectURL(blob);
@@ -899,7 +899,7 @@ export const api = {
       headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       body: fd,
     });
-    if (!r.ok) throw new Error(`上传失败: ${r.status} ${await r.text()}`);
+    if (!r.ok) throw new Error(`Falha no upload: ${r.status} ${await r.text()}`);
     return r.json() as Promise<{ attachments: ChatAttachment[] }>;
   },
   stopChat: (taskId: string) => post<{ status: string }>(`/tasks/${taskId}/chat/stop`, {}),
@@ -1160,7 +1160,7 @@ export const api = {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     const body = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(body?.error || `上传失败(${r.status})`);
+    if (!r.ok) throw new Error(body?.error || `Falha no upload (${r.status})`);
     return body;
   },
   deleteSkill: (name: string) => del<{ deleted: string }>(`/skills/${name}`),

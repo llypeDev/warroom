@@ -55,10 +55,10 @@ function AgentGridCard({
   async function del() {
     try {
       await api.deleteAgent(agent.key);
-      toast.success(`已删除 Agent「${agent.name}」`);
+      toast.success(`Agent「${agent.name}」 excluído`);
       onDeleted();
     } catch (e) {
-      toast.error("删除失败：" + (e as Error).message);
+      toast.error("Falha ao excluir: " + (e as Error).message);
     }
   }
   return (
@@ -70,26 +70,26 @@ function AgentGridCard({
           <span className="text-muted-foreground font-mono text-xs">{agent.key}</span>
           {agent.builtin ? (
             <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
-              内置
+              Integrado
             </Badge>
           ) : (
             <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
-              自定义
+              Personalizado
             </Badge>
           )}
           {!agent.enabled && (
             <Badge variant="outline" className="text-destructive px-1.5 py-0 text-[10px]">
-              已停用
+              Desativado
             </Badge>
           )}
         </div>
         <p className="text-muted-foreground line-clamp-2 min-h-8 text-xs">
-          {agent.description || "（无描述）"}
+          {agent.description || "(Sem descrição)"}
         </p>
         <div className="text-muted-foreground flex flex-wrap gap-1.5 text-[10px]">
           <span className="rounded border px-1.5 py-0.5">MCP {agent.mcp_count ?? 0}</span>
           <span className="rounded border px-1.5 py-0.5">Skill {agent.skill_count ?? 0}</span>
-          <span className="rounded border px-1.5 py-0.5">工具 {agent.tool_count ?? 0}</span>
+          <span className="rounded border px-1.5 py-0.5">Ferramentas {agent.tool_count ?? 0}</span>
         </div>
       </button>
       {!agent.builtin && (
@@ -105,14 +105,14 @@ function AgentGridCard({
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>删除 Agent「{agent.name}」？</AlertDialogTitle>
+              <AlertDialogTitle>Excluir Agent「{agent.name}」?</AlertDialogTitle>
               <AlertDialogDescription>
-                将一并删除它的提示词、变量、可见性与工具绑定。此操作不可撤销。
+                Também serão excluídos os prompts, variáveis, visibilidade e vinculações de ferramentas dele. Esta ação não pode ser desfeita.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>取消</AlertDialogCancel>
-              <AlertDialogAction onClick={del}>删除</AlertDialogAction>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={del}>Excluir</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
@@ -132,14 +132,14 @@ function CreateAgentDialog({ onCreated }: { onCreated: (key: string) => void }) 
     setBusy(true);
     try {
       const a = await api.createAgent(key.trim(), name.trim(), description.trim());
-      toast.success(`已创建 Agent「${a.name}」`);
+      toast.success(`Agent「${a.name}」 criado`);
       setOpen(false);
       setKey("");
       setName("");
       setDescription("");
       onCreated(a.key);
     } catch (e) {
-      toast.error("创建失败：" + (e as Error).message);
+      toast.error("Falha ao criar: " + (e as Error).message);
     } finally {
       setBusy(false);
     }
@@ -152,14 +152,14 @@ function CreateAgentDialog({ onCreated }: { onCreated: (key: string) => void }) 
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size="sm">
-          <PlusIcon /> 新建 Agent
+          <PlusIcon /> Adicionar Agent
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>新建自定义 Agent</DialogTitle>
+          <DialogTitle>Adicionar Agent personalizado</DialogTitle>
           <DialogDescription>
-            创建一个会话型助手。key 用于内部标识，创建后不可更改；名称与描述用于识别。
+            Cria um assistente do tipo conversacional. A key serve como identificador interno e não pode ser alterada após a criação; nome e descrição servem para identificação.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-2">
@@ -167,29 +167,29 @@ function CreateAgentDialog({ onCreated }: { onCreated: (key: string) => void }) 
             <Label htmlFor="agent-key">Key</Label>
             <Input
               id="agent-key"
-              placeholder="如 research_helper"
+              placeholder="ex.: research_helper"
               value={key}
               onChange={(e) => setKey(e.target.value)}
               className="font-mono"
             />
             {key.length > 0 && !keyOk && (
-              <span className="text-destructive text-xs">小写字母开头，仅含小写字母/数字/下划线</span>
+              <span className="text-destructive text-xs">Comece com letra minúscula; use apenas letras minúsculas, números e sublinhado (_)</span>
             )}
           </div>
           <div className="grid gap-1.5">
-            <Label htmlFor="agent-name">名称</Label>
+            <Label htmlFor="agent-name">Nome</Label>
             <Input
               id="agent-name"
-              placeholder="如 研究助手"
+              placeholder="ex.: Assistente de pesquisa"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div className="grid gap-1.5">
-            <Label htmlFor="agent-desc">描述</Label>
+            <Label htmlFor="agent-desc">Descrição</Label>
             <Textarea
               id="agent-desc"
-              placeholder="一句话说明这个 Agent 是干什么的"
+              placeholder="Descreva em uma frase o que este Agent faz"
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -198,7 +198,7 @@ function CreateAgentDialog({ onCreated }: { onCreated: (key: string) => void }) 
         </div>
         <DialogFooter>
           <Button onClick={create} disabled={!canCreate}>
-            创建
+            Criar
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -225,7 +225,7 @@ export default function AgentsPage() {
         <div>
           <h1 className="text-xl font-semibold tracking-tight">Agent</h1>
           <p className="text-muted-foreground text-sm">
-            内置 Agent 的提示词/配置，以及自定义会话 Agent 的创建与管理
+            Prompts/configurações dos Agents integrados, e criação e gestão de Agents personalizados de conversa
           </p>
         </div>
         <CreateAgentDialog
@@ -238,12 +238,12 @@ export default function AgentsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Agent 清单</CardTitle>
-          <CardDescription>共 {agents.length} 个</CardDescription>
+          <CardTitle>Lista de Agents</CardTitle>
+          <CardDescription>Total: {agents.length}</CardDescription>
         </CardHeader>
         <CardContent>
           {agents.length === 0 ? (
-            <p className="text-muted-foreground py-6 text-center text-sm">（暂无 Agent）</p>
+            <p className="text-muted-foreground py-6 text-center text-sm">(Nenhum Agent)</p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {agents.map((a) => (
@@ -267,11 +267,11 @@ export default function AgentsPage() {
                   <span className="text-muted-foreground font-mono text-xs">{editing.key}</span>
                   {!editing.builtin && (
                     <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
-                      自定义
+                      Personalizado
                     </Badge>
                   )}
                 </SheetTitle>
-                <SheetDescription>{editing.description || "提示词、配置、可见资源与工具绑定"}</SheetDescription>
+                <SheetDescription>{editing.description || "Prompts, configurações, recursos visíveis e vinculações de ferramentas"}</SheetDescription>
               </SheetHeader>
               <AgentEditor agentKey={editing.key} onSaved={reload} />
             </>
